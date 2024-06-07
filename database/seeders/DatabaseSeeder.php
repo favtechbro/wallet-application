@@ -14,12 +14,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->command->info('Seeding users...');
         User::factory(10)->create();
+        $this->command->alert('Users seeding completed');
 
+        $this->command->info('Seeding transactions...');
         $userCount = User::count();
 
         if ($userCount == 0) {
-            $this->command->info('No users found, skipping transactions seeding.');
+            $this->command->error('No users found, skipping transactions seeding.');
             return;
         }
 
@@ -30,5 +33,6 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $user->id,
             ]);
         });
+        $this->command->alert('Transactions seeding completed');
     }
 }
