@@ -6,6 +6,8 @@ use App\Models\Transaction;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,6 +16,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        //create admin user
+        User::create([
+            'name' => "Administrator",
+            'email' => 'admin@test.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('Password+1'),
+            'remember_token' => Str::random(10),
+        ]);
+
         $this->command->info('Seeding users...');
         User::factory(10)->create();
         $this->command->alert('Users seeding completed');
