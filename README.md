@@ -8,17 +8,24 @@ This is a simple wallet system with functionality to credit and debit a users wa
 git clone https://github.com/favtechbro/wallet-application.git
 ```
 
-2. Run migration
+2. Install dependencies
+```sh
+composer install
+```
+
+3. Create a .env file and past the content of .env.example in it
+
+4. Run migration
 ```sh
 php artisan migrate
 ```
 
-3. Seed database
+5. Seed database
 ```sh
 php artisan db:seed
 ```
 
-4. Run the application
+6. Run the application
 ```sh
 php artisan serve
 ```
