@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Common\TransactionsExport;
 use App\Http\Requests\AdminCreditUserRequest;
 use App\Http\Requests\AdminDebitUserRequest;
 use Illuminate\Http\Request;
 use App\Services\AdminService;
 use App\Services\UserService;
+use App\Services\WalletService;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminController extends Controller
 {
@@ -18,9 +21,14 @@ class AdminController extends Controller
     {
         $users = $this->userService->getUsers();
 
+        return view('dashboard', compact('users'));
+    }
+
+    public function reports()
+    {
         $transactions = $this->adminService->getWeeklyReport();
 
-        return view('dashboard', compact('transactions', 'users'));
+        return view('transactions', compact('transactions'));
     }
 
     public function credit(AdminCreditUserRequest $request)
@@ -49,8 +57,8 @@ class AdminController extends Controller
         }
     }
 
-    public function reports(Request $request)
+    public function exportWeeklyReport()
     {
-        $data = $this->adminService->getWeeklyReport();
+        return Excel::download(new TransactionsExport(new WalletService()), 'weekly_report.xlsx');
     }
 }

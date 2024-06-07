@@ -8,8 +8,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', [AdminController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -17,8 +15,12 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/transactions', [AdminController::class, 'reports'])->name('reports');
+    Route::get('/download-report', [AdminController::class, 'exportWeeklyReport'])->name('dowload-reports');
+
     Route::post('/admin/credit', [AdminController::class, 'credit']);
     Route::post('/admin/debit', [AdminController::class, 'debit']);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

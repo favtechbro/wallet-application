@@ -14,4 +14,9 @@ class Transaction extends Model
         'type',
         'amount'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
