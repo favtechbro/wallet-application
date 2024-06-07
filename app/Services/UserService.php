@@ -32,4 +32,8 @@ class UserService
             'token' => $token->plainTextToken
         ];
     }
+
+    public function getUsers() {
+        return User::all();
+    }
 }

@@ -2,45 +2,55 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AdminCreditUserRequest;
+use App\Http\Requests\AdminDebitUserRequest;
 use Illuminate\Http\Request;
 use App\Services\AdminService;
+use App\Services\UserService;
 
 class AdminController extends Controller
 {
-    protected $adminService;
-
-    public function __construct(AdminService $adminService)
+    public function __construct(private readonly AdminService $adminService, private readonly UserService $userService)
     {
-        $this->adminService = $adminService;
     }
 
     public function index()
     {
-        $transactions = $this->adminService->getTransactionReport();
-        return view('admin.index', compact('transactions'));
+        $users = $this->userService->getUsers();
+
+        $transactions = $this->adminService->getWeeklyReport();
+
+        return view('dashboard', compact('transactions', 'users'));
     }
 
-    public function credit(Request $request)
+    public function credit(AdminCreditUserRequest $request)
     {
-        $amount = $request->input('amount');
-        $userId = $request->input('user_id');
+        try {
+            $amount = $request->input('amount');
+            $userId = $request->input('user_id');
 
-        $this->adminService->credit($userId, $amount);
-        return redirect('/admin')->with('message', 'Wallet credited successfully.');
+            $this->adminService->credit($userId, $amount);
+            return redirect()->back()->with('success', 'Wallet credited successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
-    public function debit(Request $request)
+    public function debit(AdminDebitUserRequest $request)
     {
         $amount = $request->input('amount');
         $userId = $request->input('user_id');
 
         try {
             $this->adminService->debit($userId, $amount);
-            return redirect('/admin')->with('message', 'Wallet debited successfully.');
+            return redirect()->back()->with('success', 'Wallet debited successfully.');
         } catch (\Exception $e) {
-            return redirect('/admin')->with('error', $e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
-    
-}
 
+    public function reports(Request $request)
+    {
+        $data = $this->adminService->getWeeklyReport();
+    }
+}
